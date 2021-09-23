@@ -1,0 +1,1034 @@
+zabbix_export:
+  version: '5.4'
+  date: '2021-09-23T05:22:34Z'
+  groups:
+    -
+      uuid: 748ad4d098d447d492bb935c907f652f
+      name: Templates/Databases
+  templates:
+    -
+      uuid: 8e51a0ea655f481898cd9433770f76ae
+      template: 'ScyllaDB by JMX'
+      name: 'ScyllaDB by JMX'
+      description: |
+        The template to monitor Scylla by Zabbix that work without any external scripts.
+        It works with both standalone and cluster instances.
+        The metrics are collected by JMX.
+        You can set {$CASSANDRA.USER} and {$CASSANDRA.PASSWORD} macros in the template for using on the host level.
+      groups:
+        -
+          name: Templates/Databases
+      items:
+        -
+          uuid: 370c57c8f9bc4e44b336c9b745159c19
+          name: 'Cluster: Name'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.db:type=StorageService","ClusterName"]'
+          history: 7d
+          trends: '0'
+          value_type: CHAR
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          preprocessing:
+            -
+              type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1h
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 164b867b667944bba1687021e326a0c5
+          name: Version
+          type: JMX
+          key: 'jmx["org.apache.cassandra.db:type=StorageService","ReleaseVersion"]'
+          history: 7d
+          trends: '0'
+          value_type: CHAR
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          preprocessing:
+            -
+              type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1h
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+          triggers:
+            -
+              uuid: 5f01761b909b4b0eb9c85f9d90453e44
+              expression: '(last(/ScyllaDB by JMX/jmx["org.apache.cassandra.db:type=StorageService","ReleaseVersion"],#1)<>last(/ScyllaDB by JMX/jmx["org.apache.cassandra.db:type=StorageService","ReleaseVersion"],#2))=1 and length(last(/ScyllaDB by JMX/jmx["org.apache.cassandra.db:type=StorageService","ReleaseVersion"]))>0'
+              name: 'Version has changed (new version: {ITEM.VALUE})'
+              priority: INFO
+              description: 'Cassandra version has changed. Ack to close.'
+              manual_close: 'YES'
+        -
+          uuid: bd31b2b0efc948d096d5477e66684ba9
+          name: 'Compaction: Number of completed tasks'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:name=CompletedTasks,type=Compaction","Value"]'
+          history: 7d
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Number of completed compactions since server [re]start.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 4f12417c19f446f399ed417290660db5
+          name: 'Commitlog: Pending tasks'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:name=PendingTasks,type=CommitLog","Value"]'
+          history: 7d
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Number of commit log messages written but yet to be fsyncâ€™d.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 27c7322879f64b368724ceec6c3dbfd2
+          name: 'Commitlog: Total size'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:name=TotalCommitLogSize,type=CommitLog","Value"]'
+          history: 7d
+          units: B
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Current size, in bytes, used by all the commit log segments.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: f71cc158181a43639e659f9f2d395802
+          name: 'RowCache: Capacity'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Cache,scope=RowCache,name=Capacity","Value"]'
+          history: 7d
+          units: B
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Cache capacity in bytes.'
+          preprocessing:
+            -
+              type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1h
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 3f2c94e4ddd645f6a7a85e7ad69d1ccc
+          name: 'RowCache: Entries'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Cache,scope=RowCache,name=Entries","Value"]'
+          history: 7d
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Total number of cache entries.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 12583bed69cb45889a507c55c9e712f8
+          name: 'RowCache: HitRate'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Cache,scope=RowCache,name=HitRate","Value"]'
+          history: 7d
+          value_type: FLOAT
+          units: '%'
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'All time cache hit rate.'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '100'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 312541bf57914f27aa187db391dcc549
+          name: 'RowCache: Hits per second'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Cache,scope=RowCache,name=Hits","Count"]'
+          history: 7d
+          value_type: FLOAT
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Rate of cache hits.'
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: a24a04269a914cb59b2ed5056b39a04f
+          name: 'RowCache: requests per second'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Cache,scope=RowCache,name=Requests","Count"]'
+          history: 7d
+          value_type: FLOAT
+          units: rps
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Rate of cache requests.'
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: ff82417324bc445a8325822ecec33046
+          name: 'RowCache: Size'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Cache,scope=RowCache,name=Size","Value"]'
+          history: 7d
+          units: B
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Total size of occupied cache, in bytes.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 247c94ea425f4fc883f4e38a1f3c1223
+          name: 'Latency: Client request read median'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","50thPercentile"]'
+          history: 7d
+          value_type: FLOAT
+          units: ms
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Total latency serving data to clients in milliseconds - median.'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.001'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: c36de389c99943e5b1e3f0e6cacd76ca
+          name: 'Latency: Client request read 75 percentile'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","75thPercentile"]'
+          history: 7d
+          value_type: FLOAT
+          units: ms
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Total latency serving data to clients in milliseconds - p75.'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.001'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 0784267504994f6fb09f6af1497ab33a
+          name: 'Latency: Client request read 95 percentile'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","95thPercentile"]'
+          history: 7d
+          value_type: FLOAT
+          units: ms
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Total latency serving data to clients in milliseconds - p95.'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.001'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: fc779d503c4d49259e443b7ba413b97f
+          name: 'Client request: Read per second'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","Count"]'
+          history: 7d
+          value_type: FLOAT
+          units: rps
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'The number of client requests per second.'
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 49b83c90e65447049a7cc67c8f2158e0
+          name: 'Latency: Client request write median'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","50thPercentile"]'
+          history: 7d
+          value_type: FLOAT
+          units: ms
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Total latency serving write requests from clients in milliseconds - median.'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.001'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 73375257417f428fabe4ec6139b9d21e
+          name: 'Latency: Client request write 75 percentile'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","75thPercentile"]'
+          history: 7d
+          value_type: FLOAT
+          units: ms
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Total latency serving write requests from clients in milliseconds - p75.'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.001'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: ebd41e04820c4894916c527a0062149a
+          name: 'Latency: Client request write 95 percentile'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","95thPercentile"]'
+          history: 7d
+          value_type: FLOAT
+          units: ms
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Total latency serving write requests from clients in milliseconds - p95.'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.001'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 5af84101bca24af098de00cef58213f0
+          name: 'Client request: Write per second'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","Count"]'
+          history: 7d
+          value_type: FLOAT
+          units: rps
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'The number of local write requests per second.'
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 122492f132e94de985bfabaccb661bb0
+          name: 'Client request: Write Timeouts'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Timeouts","Count"]'
+          history: 7d
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Number of write requests timeouts encountered.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+        -
+          uuid: 121daffaad734484be243524609d4aa6
+          name: 'Compaction: Pending tasks'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Compaction,name=PendingTasks","Value"]'
+          history: 7d
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Estimated number of compactions remaining to perform.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+          triggers:
+            -
+              uuid: 5bf7069a20824dbbbcaa1ae85e8933f9
+              expression: 'min(/ScyllaDB by JMX/jmx["org.apache.cassandra.metrics:type=Compaction,name=PendingTasks","Value"],15m)>{$CASSANDRA.PENDING_TASKS.MAX.WARN}'
+              name: 'Many pending tasks (over {$CASSANDRA.PENDING_TASKS.MAX.WARN} for 15m)'
+              priority: WARNING
+              dependencies:
+                -
+                  name: 'Too many pending tasks (over {$CASSANDRA.PENDING_TASKS.MAX.HIGH} for 15m)'
+                  expression: 'min(/ScyllaDB by JMX/jmx["org.apache.cassandra.metrics:type=Compaction,name=PendingTasks","Value"],15m)>{$CASSANDRA.PENDING_TASKS.MAX.HIGH}'
+            -
+              uuid: c123a73cdf66473c983d397ceb017b1a
+              expression: 'min(/ScyllaDB by JMX/jmx["org.apache.cassandra.metrics:type=Compaction,name=PendingTasks","Value"],15m)>{$CASSANDRA.PENDING_TASKS.MAX.HIGH}'
+              name: 'Too many pending tasks (over {$CASSANDRA.PENDING_TASKS.MAX.HIGH} for 15m)'
+              priority: AVERAGE
+        -
+          uuid: 88fbe489f2e144399994a3e35b41b234
+          name: 'Storage: Errors'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Storage,name=Exceptions","Count"]'
+          history: 7d
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Number of internal exceptions caught. Under normal exceptions this should be zero.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+          triggers:
+            -
+              uuid: 3df2e21ded0049a6b0414643dbb4d8d0
+              expression: 'min(/ScyllaDB by JMX/jmx["org.apache.cassandra.metrics:type=Storage,name=Exceptions","Count"],5m)>0'
+              name: 'Too many storage exceptions'
+              priority: WARNING
+        -
+          uuid: 3eca15ad078541e782ee738067a1759b
+          name: 'Storage: Used (bytes)'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.metrics:type=Storage,name=Load","Count"]'
+          history: 7d
+          units: B
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          description: 'Size, in bytes, of the on disk data size this node manages.'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+          triggers:
+            -
+              uuid: c4d0fdf04ecc4e61b7ce97a6fb727494
+              expression: 'nodata(/ScyllaDB by JMX/jmx["org.apache.cassandra.metrics:type=Storage,name=Load","Count"],15m)=1'
+              name: 'Failed to fetch info data (or no data for 15m)'
+              priority: WARNING
+              description: 'Zabbix has not received data for items for the last 15 minutes'
+        -
+          uuid: 8ed13a8abe1240a2a635e3c133609d7a
+          name: 'Cluster: Nodes down'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.net:type=FailureDetector","DownEndpointCount"]'
+          history: 7d
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          preprocessing:
+            -
+              type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1h
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+          triggers:
+            -
+              uuid: 598bb4a4bdf849b58c1200a31a6c3266
+              expression: 'last(/ScyllaDB by JMX/jmx["org.apache.cassandra.net:type=FailureDetector","DownEndpointCount"])>0'
+              name: 'There are down nodes in cluster'
+              status: DISABLED
+              priority: AVERAGE
+        -
+          uuid: ef2fb4d4173b483eb3888e74aa1f1c5d
+          name: 'Cluster: Nodes up'
+          type: JMX
+          key: 'jmx["org.apache.cassandra.net:type=FailureDetector","UpEndpointCount"]'
+          history: 7d
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          preprocessing:
+            -
+              type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1h
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+          tags:
+            -
+              tag: Application
+              value: ScyllaDB
+      discovery_rules:
+        -
+          uuid: c7b45884d52a45daa4fe58df339f0b63
+          name: Tables
+          type: JMX
+          key: 'jmx.discovery[beans,"org.apache.cassandra.db:columnfamily=*,keyspace=*,type=ColumnFamilies"]'
+          delay: 1h
+          username: '{$CASSANDRA.USER}'
+          password: '{$CASSANDRA.PASSWORD}'
+          filter:
+            evaltype: AND
+            conditions:
+              -
+                macro: '{#JMXKEYSPACE}'
+                value: '{$CASSANDRA.KEY_SPACE.MATCHES}'
+                formulaid: A
+              -
+                macro: '{#JMXKEYSPACE}'
+                value: '{$CASSANDRA.KEY_SPACE.NOT_MATCHES}'
+                operator: NOT_MATCHES_REGEX
+                formulaid: B
+          description: 'Info about keyspaces and tables'
+          item_prototypes:
+            -
+              uuid: e784144e034448a796c01e04dbe2047f
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Bloom filter false ratio'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=BloomFilterFalseRatio","Value"]'
+              history: 7d
+              value_type: FLOAT
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The ratio of Bloom filter false positives to total checks.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 44cf7c9905eb4e79b8da9ef5d5d1cc94
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Compression ratio'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=CompressionRatio","Value"]'
+              history: 7d
+              value_type: FLOAT
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The compression ratio for all SSTables.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: e547320d58ee4f8ba27f5fe0b2b6f2f1
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Live disk space used'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=LiveDiskSpaceUsed","Count"]'
+              history: 7d
+              units: B
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The disk space used by "live" SSTables (only counts in use files).'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 0d1b1a394c4d45b9b271fdd8a77a1134
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Live SS Table'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=LiveSSTableCount","Value"]'
+              history: 7d
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'Number of "live" (in use) SSTables.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 0e2ceb64a69f45249abd5d4e2e3ed234
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Max partition size'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=MaxPartitionSize","Value"]'
+              history: 7d
+              units: B
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The size of the largest compacted partition.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 74125419460a4fd790925929524a3a83
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Mean partition size'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=MeanPartitionSize","Value"]'
+              history: 7d
+              units: B
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The average size of compacted partition.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 5d8a74fb3d804055a6620cf5ab427082
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Pending compactions'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=PendingCompactions","Value"]'
+              history: 7d
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The number of pending compactions.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 9fb8b26b219b4849802d6d5f2bb3e690
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Pending flushes'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=PendingFlushes","Count"]'
+              history: 7d
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The number of pending flushes.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: e78ad6e8012048daaeb22bb773a143c3
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Read latency 75 percentile'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","75thPercentile"]'
+              history: 7d
+              value_type: FLOAT
+              units: ms
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'Latency read from disk in milliseconds.'
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.001'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 6872c3a6a3224191b3ef3e184c526e62
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Read latency 95 percentile'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","95thPercentile"]'
+              history: 7d
+              value_type: FLOAT
+              units: ms
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'Latency read from disk in milliseconds.'
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.001'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 5b94f321e6af48c5abfaf92fa99a9944
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Read per second'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","Count"]'
+              history: 7d
+              value_type: FLOAT
+              units: rps
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The number of client requests per second.'
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: ead864847d9a45fb9e5b5c29b9dede7a
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Snapshots size'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=SnapshotsSize","Value"]'
+              history: 7d
+              units: B
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The disk space truly used by snapshots.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 7c4ccf650a184a39897a0e73aea7e486
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: SS Tables per read 75 percentile'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=SSTablesPerReadHistogram","75thPercentile"]'
+              history: 7d
+              value_type: FLOAT
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The number of SSTable data files accessed per read - p75.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 29ca98187a6c4dbbac7d9920253308a0
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: SS Tables per read 95 percentile'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=SSTablesPerReadHistogram","95thPercentile"]'
+              history: 7d
+              value_type: FLOAT
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The number of SSTable data files accessed per read - p95.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 619b7fb67b0b49919ad501e7b7ae3dc4
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Tombstone scanned 75 percentile'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=TombstoneScannedHistogram","75thPercentile"]'
+              history: 7d
+              value_type: FLOAT
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'Number of tombstones scanned per read - p75.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 15f3e4da6be5494da2221c7ba7a8b02f
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Tombstone scanned 95 percentile'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=TombstoneScannedHistogram","95thPercentile"]'
+              history: 7d
+              value_type: FLOAT
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'Number of tombstones scanned per read - p95.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 99d90d31c21245e2afa8009cf316ee38
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Disk space used'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=TotalDiskSpaceUsed","Count"]'
+              history: 7d
+              units: B
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'Disk space used.'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: 6c3b80cc19074a9da81e2e2b0fee4ef2
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Write latency 75 percentile'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","75thPercentile"]'
+              history: 7d
+              value_type: FLOAT
+              units: ms
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'Latency write to disk in milliseconds.'
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.001'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: db9d9df315f74cd3915c551a255b9284
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Write latency 95 percentile'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","95thPercentile"]'
+              history: 7d
+              value_type: FLOAT
+              units: ms
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'Latency write to disk in milliseconds.'
+              preprocessing:
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '0.001'
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+            -
+              uuid: ee0c2f8310a443ee9d9cb238416e8daf
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Write per second'
+              type: JMX
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","Count"]'
+              history: 7d
+              value_type: FLOAT
+              units: rps
+              username: '{$CASSANDRA.USER}'
+              password: '{$CASSANDRA.PASSWORD}'
+              description: 'The number of local write requests per second.'
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+              tags:
+                -
+                  tag: Application
+                  value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
+          graph_prototypes:
+            -
+              uuid: 11cd508938534a39a10be649301314e6
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Read\Write latency'
+              graph_items:
+                -
+                  sortorder: '1'
+                  color: 1A7C11
+                  item:
+                    host: 'ScyllaDB by JMX'
+                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","75thPercentile"]'
+                -
+                  sortorder: '2'
+                  color: 2774A4
+                  item:
+                    host: 'ScyllaDB by JMX'
+                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","95thPercentile"]'
+                -
+                  sortorder: '3'
+                  color: F63100
+                  item:
+                    host: 'ScyllaDB by JMX'
+                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","75thPercentile"]'
+                -
+                  sortorder: '4'
+                  color: A54F10
+                  item:
+                    host: 'ScyllaDB by JMX'
+                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","95thPercentile"]'
+            -
+              uuid: 6a4b21ee584e4013a66abd1c12d054d8
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Requests rate'
+              graph_items:
+                -
+                  sortorder: '1'
+                  color: 1A7C11
+                  item:
+                    host: 'ScyllaDB by JMX'
+                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","Count"]'
+                -
+                  sortorder: '2'
+                  color: 2774A4
+                  item:
+                    host: 'ScyllaDB by JMX'
+                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","Count"]'
+          jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
+      macros:
+        -
+          macro: '{$CASSANDRA.KEY_SPACE.MATCHES}'
+          value: '.*'
+          description: 'Filter of discoverable key spaces'
+        -
+          macro: '{$CASSANDRA.KEY_SPACE.NOT_MATCHES}'
+          value: (system|system_auth|system_distributed|system_schema|system_traces)
+          description: 'Filter to exclude discovered key spaces'
+        -
+          macro: '{$CASSANDRA.PASSWORD}'
+          value: zabbix
+        -
+          macro: '{$CASSANDRA.PENDING_TASKS.MAX.HIGH}'
+          value: '500'
+        -
+          macro: '{$CASSANDRA.PENDING_TASKS.MAX.WARN}'
+          value: '350'
+        -
+          macro: '{$CASSANDRA.USER}'
+          value: zabbix
+  graphs:
+    -
+      uuid: fa17c675ce79442e82802d580afcf87b
+      name: 'Client requests rate'
+      graph_items:
+        -
+          drawtype: BOLD_LINE
+          color: 1A7C11
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","Count"]'
+        -
+          sortorder: '1'
+          drawtype: BOLD_LINE
+          color: 2774A4
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","Count"]'
+    -
+      uuid: 4ffa14d8efd6415aac2835454266a0d8
+      name: 'Client requests Read\Write latency'
+      graph_items:
+        -
+          drawtype: BOLD_LINE
+          color: 1A7C11
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","50thPercentile"]'
+        -
+          sortorder: '1'
+          drawtype: BOLD_LINE
+          color: 2774A4
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","50thPercentile"]'
+        -
+          sortorder: '2'
+          color: F63100
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","75thPercentile"]'
+        -
+          sortorder: '3'
+          color: A54F10
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","95thPercentile"]'
+        -
+          sortorder: '4'
+          color: FC6EA3
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","75thPercentile"]'
+        -
+          sortorder: '5'
+          color: 6C59DC
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","95thPercentile"]'
+    -
+      uuid: b14b5668219b4a039b4c7a4381987e1d
+      name: 'Nodes state'
+      graph_items:
+        -
+          color: 1A7C11
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.net:type=FailureDetector","UpEndpointCount"]'
+        -
+          sortorder: '1'
+          color: 2774A4
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.net:type=FailureDetector","DownEndpointCount"]'
+    -
+      uuid: 4fcb33fa76df49868126a8a3186caa85
+      name: 'RowCache Hit rate'
+      graph_items:
+        -
+          sortorder: '1'
+          drawtype: BOLD_LINE
+          color: 1A7C11
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=Cache,scope=RowCache,name=Hits","Count"]'
+        -
+          sortorder: '2'
+          drawtype: BOLD_LINE
+          color: 2774A4
+          item:
+            host: 'ScyllaDB by JMX'
+            key: 'jmx["org.apache.cassandra.metrics:type=Cache,scope=RowCache,name=Requests","Count"]'
