@@ -244,15 +244,15 @@ zabbix_export:
               value: ScyllaDB
         -
           uuid: c36de389c99943e5b1e3f0e6cacd76ca
-          name: 'Latency: Client request read 75 percentile'
+          name: 'Latency: Client request read 99 percentile'
           type: JMX
-          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","75thPercentile"]'
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","99thPercentile"]'
           history: 7d
           value_type: FLOAT
           units: ms
           username: '{$CASSANDRA.USER}'
           password: '{$CASSANDRA.PASSWORD}'
-          description: 'Total latency serving data to clients in milliseconds - p75.'
+          description: 'Total latency serving data to clients in milliseconds - p99.'
           preprocessing:
             -
               type: MULTIPLIER
@@ -328,15 +328,15 @@ zabbix_export:
               value: ScyllaDB
         -
           uuid: 73375257417f428fabe4ec6139b9d21e
-          name: 'Latency: Client request write 75 percentile'
+          name: 'Latency: Client request write 99 percentile'
           type: JMX
-          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","75thPercentile"]'
+          key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","99thPercentile"]'
           history: 7d
           value_type: FLOAT
           units: ms
           username: '{$CASSANDRA.USER}'
           password: '{$CASSANDRA.PASSWORD}'
-          description: 'Total latency serving write requests from clients in milliseconds - p75.'
+          description: 'Total latency serving write requests from clients in milliseconds - p99.'
           preprocessing:
             -
               type: MULTIPLIER
@@ -659,9 +659,9 @@ zabbix_export:
                   value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
             -
               uuid: e78ad6e8012048daaeb22bb773a143c3
-              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Read latency 75 percentile'
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Read latency 99 percentile'
               type: JMX
-              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","75thPercentile"]'
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","99thPercentile"]'
               history: 7d
               value_type: FLOAT
               units: ms
@@ -737,14 +737,14 @@ zabbix_export:
                   value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
             -
               uuid: 7c4ccf650a184a39897a0e73aea7e486
-              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: SS Tables per read 75 percentile'
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: SS Tables per read 99 percentile'
               type: JMX
-              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=SSTablesPerReadHistogram","75thPercentile"]'
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=SSTablesPerReadHistogram","99thPercentile"]'
               history: 7d
               value_type: FLOAT
               username: '{$CASSANDRA.USER}'
               password: '{$CASSANDRA.PASSWORD}'
-              description: 'The number of SSTable data files accessed per read - p75.'
+              description: 'The number of SSTable data files accessed per read - p99.'
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
@@ -767,14 +767,14 @@ zabbix_export:
                   value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
             -
               uuid: 619b7fb67b0b49919ad501e7b7ae3dc4
-              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Tombstone scanned 75 percentile'
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Tombstone scanned 99 percentile'
               type: JMX
-              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=TombstoneScannedHistogram","75thPercentile"]'
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=TombstoneScannedHistogram","99thPercentile"]'
               history: 7d
               value_type: FLOAT
               username: '{$CASSANDRA.USER}'
               password: '{$CASSANDRA.PASSWORD}'
-              description: 'Number of tombstones scanned per read - p75.'
+              description: 'Number of tombstones scanned per read - p99.'
               jmx_endpoint: 'service:jmx:rmi:///jndi/rmi://{HOST.CONN}:{HOST.PORT}/jmxrmi'
               tags:
                 -
@@ -812,9 +812,9 @@ zabbix_export:
                   value: 'ScyllaDB table {#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}'
             -
               uuid: 6c3b80cc19074a9da81e2e2b0fee4ef2
-              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Write latency 75 percentile'
+              name: '{#JMXKEYSPACE}.{#JMXCOLUMNFAMILY}: Write latency 99 percentile'
               type: JMX
-              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","75thPercentile"]'
+              key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","99thPercentile"]'
               history: 7d
               value_type: FLOAT
               units: ms
@@ -883,7 +883,7 @@ zabbix_export:
                   color: 1A7C11
                   item:
                     host: 'ScyllaDB by JMX'
-                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","75thPercentile"]'
+                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=ReadLatency","99thPercentile"]'
                 -
                   sortorder: '2'
                   color: 2774A4
@@ -895,7 +895,7 @@ zabbix_export:
                   color: F63100
                   item:
                     host: 'ScyllaDB by JMX'
-                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","75thPercentile"]'
+                    key: 'jmx["org.apache.cassandra.metrics:type=Table,keyspace={#JMXKEYSPACE},scope={#JMXCOLUMNFAMILY},name=WriteLatency","99thPercentile"]'
                 -
                   sortorder: '4'
                   color: A54F10
@@ -980,7 +980,7 @@ zabbix_export:
           color: F63100
           item:
             host: 'ScyllaDB by JMX'
-            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","75thPercentile"]'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Read,name=Latency","99thPercentile"]'
         -
           sortorder: '3'
           color: A54F10
@@ -992,7 +992,7 @@ zabbix_export:
           color: FC6EA3
           item:
             host: 'ScyllaDB by JMX'
-            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","75thPercentile"]'
+            key: 'jmx["org.apache.cassandra.metrics:type=ClientRequest,scope=Write,name=Latency","99thPercentile"]'
         -
           sortorder: '5'
           color: 6C59DC
